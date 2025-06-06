@@ -7,6 +7,8 @@ from multiprocessing import Pool
 
 out_path="out"
 tmp_path="tmp"
+# Path to the json-schema-to-nickel library.
+json_schema_to_nickel_lib="lib/main.ncl"
 
 def fetch_schema_list():
     with urllib.request.urlopen("https://www.schemastore.org/api/json/catalog.json") as response:
@@ -32,7 +34,8 @@ def bundle_schema(raw_schema_file, dest_file):
 
 def convert_to_nickel(bundled_schema_file, dest_file):
     with open(dest_file, "w+") as out:
-        js2n = subprocess.run(["json-schema-to-nickel", bundled_schema_file],
+        relative_lib_path = os.path.relpath(json_schema_to_nickel_lib, os.path.dirname(dest_file))
+        js2n = subprocess.run(["json-schema-to-nickel", bundled_schema_file, "--library-path", relative_lib_path],
             stdout = out,
             check = True,
         )
