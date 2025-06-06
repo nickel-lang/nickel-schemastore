@@ -1,1 +1,15 @@
-null
+# DO NOT EDIT
+# This file was automatically generated using json-schema-to-nickel
+let js2n
+  = import "../lib/main.ncl"
+  in
+let rec refs
+    = {}
+    in
+  js2n.record.Record
+      {
+        additional = 'Some String,
+        patterns = {},
+        properties = { "$schema" = String, },
+        required = {},
+      }
