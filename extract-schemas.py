@@ -31,7 +31,7 @@ def bundle_schema(raw_schema_file, dest_file):
         )
 
 def convert_to_nickel(bundled_schema_file, dest_file):
-    with open(dest_file) as out:
+    with open(dest_file, "w+") as out:
         js2n = subprocess.run(["json-schema-to-nickel", bundled_schema_file],
             stdout = out,
             check = True,
@@ -44,6 +44,14 @@ def process_one_schema(schema_descr):
     bundled_file = os.path.join(tmp_path, schema_descr["name"] + ".bundled.json")
     dest_file = os.path.join(out_path, attr_name + ".ncl")
 
+    # Sometimes the script hangs in the middle (sounds like concurrency-related
+    # deadlock). To make it possible to regenerate contracts in multiple passes,
+    # just uncomment the following code.
+    #
+    # if os.path.isfile(dest_file):
+    #     print(f"{name}: skipping already converted schema")
+    #     return f'"{attr_name}" = import "{dest_file}",'
+
     print(f"“{name}”: START")
 
     try:
@@ -51,7 +59,6 @@ def process_one_schema(schema_descr):
         os.makedirs(os.path.dirname(raw_schema_file), exist_ok = True)
         os.makedirs(os.path.dirname(bundled_file), exist_ok = True)
         os.makedirs(os.path.dirname(dest_file), exist_ok = True)
-
 
         print(f"“{name}”: Fetching schema...")
         fetch_schema(schema_descr, raw_schema_file)
