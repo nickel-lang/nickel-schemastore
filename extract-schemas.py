@@ -17,7 +17,14 @@ json_schema_to_nickel_lib = "lib/main.ncl"
 resume = False
 
 def to_snake_case(description: str) -> str:
-    s = re.sub(r"[ ',;\"]", "_", description)
+    """
+    Converts a descriptive name (possibly with spaces and special characters) to
+    a suitable filename for both Unix and Windows, mostly by converting to
+    snake_case and getting rid of any special characters but alphanumeric and a
+    few selected ones (dashes and dots).
+    """
+    s = re.sub(r"[ ,-]", "_", description)
+    s = re.sub(r"[^a-zA-Z0-9._]", "", s)
     s = re.sub(r"__+", "_", s)
     return s.strip("_").lower()
 
@@ -60,7 +67,7 @@ def process_one_schema(schema_descr):
     bundled_file = os.path.join(tmp_path, normalized_name + ".bundled.json")
     dest_file = os.path.join(out_path, normalized_name + ".ncl")
 
-        if resume and os.path.isfile(dest_file):
+    if resume and os.path.isfile(dest_file):
         print(f"{name}: skipping already converted schema")
         return f'"{attr_name}" = import "{dest_file}",'
 
