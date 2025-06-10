@@ -3,12 +3,23 @@ import urllib.parse
 import json
 import subprocess
 import os.path
+import re
 from multiprocessing import Pool
 
-out_path="out"
-tmp_path="tmp"
+out_path = "out"
+tmp_path = "tmp"
 # Path to the json-schema-to-nickel library.
-json_schema_to_nickel_lib="lib/main.ncl"
+json_schema_to_nickel_lib = "lib/main.ncl"
+# If set to `True`, the script won't process schemas that already exist in the
+# output directory. Sometimes the script hangs in the middle (looks like
+# a concurrency-related issue). To make it possible to regenerate contracts in
+# multiple passes, enable this flag.
+resume = False
+
+def to_snake_case(description: str) -> str:
+    s = re.sub(r"[ ',;\"]", "_", description)
+    s = re.sub(r"__+", "_", s)
+    return s.strip("_").lower()
 
 def fetch_schema_list():
     with urllib.request.urlopen("https://www.schemastore.org/api/json/catalog.json") as response:
@@ -42,20 +53,18 @@ def convert_to_nickel(bundled_schema_file, dest_file):
 
 def process_one_schema(schema_descr):
     name = schema_descr["name"]
-    attr_name = schema_descr["name"]
-    raw_schema_file = os.path.join(tmp_path, schema_descr["name"] + ".json")
-    bundled_file = os.path.join(tmp_path, schema_descr["name"] + ".bundled.json")
-    dest_file = os.path.join(out_path, attr_name + ".ncl")
+    normalized_name = to_snake_case(name)
+    attr_name = normalized_name
 
-    # Sometimes the script hangs in the middle (sounds like concurrency-related
-    # deadlock). To make it possible to regenerate contracts in multiple passes,
-    # just uncomment the following code.
-    #
-    # if os.path.isfile(dest_file):
-    #     print(f"{name}: skipping already converted schema")
-    #     return f'"{attr_name}" = import "{dest_file}",'
+    raw_schema_file = os.path.join(tmp_path, normalized_name + ".json")
+    bundled_file = os.path.join(tmp_path, normalized_name + ".bundled.json")
+    dest_file = os.path.join(out_path, normalized_name + ".ncl")
 
-    print(f"“{name}”: START")
+        if resume and os.path.isfile(dest_file):
+        print(f"{name}: skipping already converted schema")
+        return f'"{attr_name}" = import "{dest_file}",'
+
+    print(f"“{name}”: START (as {normalized_name})")
 
     try:
         print(f"“{name}”: Creating local files...")
