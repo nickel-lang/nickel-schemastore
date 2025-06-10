@@ -45,6 +45,11 @@ let rec refs
         {
             backstory | String,
             goal | String,
+            knowledgeSources
+              | Array (
+                std.contract.Sequence
+                  [ refs."definitions.yawl.KnowledgeSource", { _ | Dyn } ]
+              ),
             model | refs."definitions.yawl.AIAgentModel" | {} | optional,
             role | String,
           },
@@ -150,6 +155,14 @@ let rec refs
                       'FUNCTION_CALL_INVALID_RESPONSE,
                       'GRPC_CALL_INVALID_REFLECTION_SERVER_RESPONSE,
                       'GRPC_CALL_INVALID_OPTIONS,
+                      'GRPC_CALL_DATA_LOSS,
+                      'GRPC_CALL_OUT_OF_RANGE,
+                      'GRPC_CALL_ABORTED,
+                      'GRPC_CALL_FAILED_PRECONDITION,
+                      'GRPC_CALL_PERMISSION_DENIED,
+                      'GRPC_CALL_ALREADY_EXISTS,
+                      'GRPC_CALL_NOT_FOUND,
+                      'GRPC_CALL_INVALID_ARGUMENT,
                       'GRPC_CALL_UNAUTHENTICATED,
                       'GRPC_CALL_RESOURCE_EXHAUSTED,
                       'GRPC_CALL_INTERNAL,
@@ -340,6 +353,53 @@ let rec refs
               | optional,
           },
       "definitions.yawl.Fail" = { errorMessage | String, },
+      "definitions.yawl.FileKnowledgeSource" =
+        {
+            dataSource
+              | refs."definitions.yawl.FileKnowledgeSource.DataSource"
+              | {},
+            type
+              | std.enum.TagOrString
+              | [| 'EXCEL, 'PDF, 'CSV, 'JSON, 'TEXT, 'UNSPECIFIED |],
+          },
+      "definitions.yawl.FileKnowledgeSource.DataSource" =
+        std.contract.Sequence
+            [
+              js2n.OneOf
+                [
+                  std.contract.any_of
+                    [
+                      js2n.Null,
+                      Bool,
+                      Number,
+                      String,
+                      js2n.record.Required [ "urlSource" ],
+                      Array Dyn
+                    ],
+                  std.contract.any_of
+                    [
+                      js2n.Null,
+                      Bool,
+                      Number,
+                      String,
+                      js2n.record.Required [ "objectStorageSource" ],
+                      Array Dyn
+                    ]
+                ],
+              {
+                objectStorageSource
+                  | refs."definitions.yawl.FileKnowledgeSource.ObjectStorageDataSource"
+                  | {}
+                  | optional,
+                urlSource
+                  | refs."definitions.yawl.FileKnowledgeSource.UrlDataSource"
+                  | {}
+                  | optional,
+              }
+            ],
+      "definitions.yawl.FileKnowledgeSource.ObjectStorageDataSource" =
+        { bucket | String, object | String, },
+      "definitions.yawl.FileKnowledgeSource.UrlDataSource" = { url | String, },
       "definitions.yawl.Foreach" =
         {
             concurrency | std.number.Integer | optional,
@@ -524,6 +584,41 @@ let rec refs
               {
                 json | String | optional,
                 plainValue | refs."definitions.yawl.MapValue" | {} | optional,
+              }
+            ],
+      "definitions.yawl.KnowledgeSource" =
+        std.contract.Sequence
+            [
+              js2n.OneOf
+                [
+                  std.contract.any_of
+                    [
+                      js2n.Null,
+                      Bool,
+                      Number,
+                      String,
+                      js2n.record.Required [ "textSource" ],
+                      Array Dyn
+                    ],
+                  std.contract.any_of
+                    [
+                      js2n.Null,
+                      Bool,
+                      Number,
+                      String,
+                      js2n.record.Required [ "fileSource" ],
+                      Array Dyn
+                    ]
+                ],
+              {
+                fileSource
+                  | refs."definitions.yawl.FileKnowledgeSource"
+                  | {}
+                  | optional,
+                textSource
+                  | refs."definitions.yawl.TextKnowledgeSource"
+                  | {}
+                  | optional,
               }
             ],
       "definitions.yawl.MapValue" = { pairs | { _ | String } | optional, },
@@ -769,6 +864,14 @@ let rec refs
                       'FUNCTION_CALL_INVALID_RESPONSE,
                       'GRPC_CALL_INVALID_REFLECTION_SERVER_RESPONSE,
                       'GRPC_CALL_INVALID_OPTIONS,
+                      'GRPC_CALL_DATA_LOSS,
+                      'GRPC_CALL_OUT_OF_RANGE,
+                      'GRPC_CALL_ABORTED,
+                      'GRPC_CALL_FAILED_PRECONDITION,
+                      'GRPC_CALL_PERMISSION_DENIED,
+                      'GRPC_CALL_ALREADY_EXISTS,
+                      'GRPC_CALL_NOT_FOUND,
+                      'GRPC_CALL_INVALID_ARGUMENT,
                       'GRPC_CALL_UNAUTHENTICATED,
                       'GRPC_CALL_RESOURCE_EXHAUSTED,
                       'GRPC_CALL_INTERNAL,
@@ -1139,6 +1242,7 @@ let rec refs
             "default" | refs."definitions.yawl.Default" | {} | optional,
             input | String | optional,
           },
+      "definitions.yawl.TextKnowledgeSource" = { content | String, },
       "definitions.yawl.Tracker" =
         std.contract.Sequence
             [

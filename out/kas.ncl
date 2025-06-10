@@ -84,7 +84,7 @@ let rec refs
           version
             | std.contract.any_of
               [
-                std.contract.Sequence [ std.enum.TagOrString, [| '"0.10" |] ],
+                std.contract.Equal "0.10",
                 std.contract.Sequence
                   [
                     std.number.Integer,
@@ -139,7 +139,12 @@ let rec refs
               layers
                 | {
                   _ | std.contract.any_of
-                    [ js2n.Null, std.number.Integer, Bool, String ]
+                    [
+                      js2n.Null,
+                      js2n.Const "disabled",
+                      js2n.Enum
+                        [ "excluded", "n", "no", "0", "false", 0, false ]
+                    ]
                 }
                 | doc "List of layers to append to the ``bblayers.conf``. If this is missing or ``None`` or an empty dictionary, the path to the repo itself is added as a layer. Additionally, ``.`` is a valid value if the repo itself should be added as a layer."
                 | optional,
