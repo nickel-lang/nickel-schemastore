@@ -11,7 +11,7 @@ Add the following field to the dependencies of your [Nickel project
 manifest](https://nickel-lang.org/user-manual/package-management/#the-manifest-file):
 
 ```nickel
-schemastore = 'Index { "github:nickel-lang/nickel-schemastore", version = "0.1.0" }
+schemastore = 'Index { "github:nickel-lang/nickel-schemastore", version = "0.4.0" }
 ```
 
 Then import one of the available schema in any Nickel file of your project:
