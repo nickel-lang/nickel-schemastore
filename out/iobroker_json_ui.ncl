@@ -172,6 +172,7 @@ let rec refs
                 'ip,
                 'interface,
                 'instance,
+                'infoBox,
                 'imageSendTo,
                 'image,
                 'icon,
@@ -1164,6 +1165,30 @@ let rec refs
                 oid
                   | String
                   | doc "Which object ID should be taken for the controlling. The ID is without \"adapter.X.\" prefix",
+                options
+                  | Array (
+                    std.contract.any_of
+                      [
+                        String,
+                        {
+                          color | String | doc "Color of the option" | optional,
+                          hidden | Bool | optional,
+                          label
+                            | std.contract.any_of
+                              [
+                                String,
+                                std.contract.Sequence
+                                  [
+                                    refs."definitions.multilingual",
+                                    { _ | Dyn }
+                                  ]
+                              ],
+                          value | std.contract.any_of [ Number, String ],
+                        }
+                      ]
+                  )
+                  | doc "Options for `select` in form `[\"value1\", \"value2\", ...]` or `[{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]`. If not defiled, the `common.states` in the object must exist."
+                  | optional,
                 readOnly
                   | Bool
                   | doc "Defines if the control is read-only. Applied only to 'input', 'slider', 'select', 'button', 'switch', 'number'"
@@ -2822,7 +2847,31 @@ let rec refs
                             onChange | js2n.Always | optional,
                             options
                               | Array (
-                                std.contract.any_of [ { _ | Dyn }, String ]
+                                std.contract.any_of
+                                  [
+                                    String,
+                                    {
+                                      color
+                                        | String
+                                        | doc "Color of the option"
+                                        | optional,
+                                      hidden | Bool | optional,
+                                      label
+                                        | std.contract.any_of
+                                          [
+                                            String,
+                                            std.contract.Sequence
+                                              [
+                                                refs."definitions.multilingual",
+                                                { _ | Dyn }
+                                              ]
+                                          ]
+                                        | doc "Label of the option",
+                                      value
+                                        | std.contract.any_of [ Number, String ]
+                                        | doc "Value of the option",
+                                    }
+                                  ]
                               )
                               | doc "Options which can be completed. [\"value1\", \"value2\", ...] or [{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]",
                             placeholder
@@ -3099,6 +3148,7 @@ let rec refs
                             options
                               | Array
                                 {
+                                  color | String | optional,
                                   group
                                     | Bool
                                     | doc "Is it a group or not"
@@ -6469,7 +6519,26 @@ let rec refs
                                             options
                                               | Array (
                                                 std.contract.any_of
-                                                  [ { _ | Dyn }, String ]
+                                                  [
+                                                    String,
+                                                    {
+                                                      color | String | optional,
+                                                      hidden | Bool | optional,
+                                                      label
+                                                        | std.contract.any_of
+                                                          [
+                                                            String,
+                                                            std.contract.Sequence
+                                                              [
+                                                                refs."definitions.multilingual",
+                                                                { _ | Dyn }
+                                                              ]
+                                                          ],
+                                                      value
+                                                        | std.contract.any_of
+                                                          [ Number, String ],
+                                                    }
+                                                  ]
                                               )
                                               | doc "Options which can be completed. [\"value1\", \"value2\", ...] or [{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]",
                                             placeholder
@@ -6630,6 +6699,7 @@ let rec refs
                                             options
                                               | Array
                                                 {
+                                                  color | String | optional,
                                                   group
                                                     | Bool
                                                     | doc "Is this a group"
@@ -7550,6 +7620,100 @@ let rec refs
                                                   Array Dyn
                                                 ]
                                             ]
+                                        ]) js2n.Always,
+                                    js2n.IfThenElse
+                                      (std.contract.any_of
+                                        [
+                                          js2n.Null,
+                                          Bool,
+                                          Number,
+                                          String,
+                                          js2n.record.Record
+                                            {
+                                              additional = 'Some Dyn,
+                                              patterns = {},
+                                              properties =
+                                                {
+                                                    type = js2n.Const "infoBox",
+                                                  },
+                                              required = {},
+                                            },
+                                          Array Dyn
+                                        ])
+                                      (std.contract.any_of
+                                        [
+                                          js2n.Null,
+                                          Bool,
+                                          Number,
+                                          String,
+                                          {
+                                            allowSaveWithError
+                                              | js2n.Always
+                                              | optional,
+                                            boxType
+                                              | std.enum.TagOrString
+                                              | [|
+                                                'ok,
+                                                'error,
+                                                'warning,
+                                                'info
+                                              |]
+                                              | doc "Type of the box"
+                                              | optional,
+                                            closable
+                                              | Bool
+                                              | doc "If the box is closeable"
+                                              | optional,
+                                            closed
+                                              | Bool
+                                              | doc "Use together with `closeable: true`. If the box is closed or not. In this case, it will be controlled from outside"
+                                              | optional,
+                                            expertMode | js2n.Always | optional,
+                                            hidden | js2n.Always | optional,
+                                            hideOnlyControl
+                                              | js2n.Always
+                                              | optional,
+                                            iconPosition
+                                              | std.enum.TagOrString
+                                              | [| 'middle, 'top |]
+                                              | doc "Position of the icon"
+                                              | optional,
+                                            lg | js2n.Always | optional,
+                                            md | js2n.Always | optional,
+                                            newLine | js2n.Always | optional,
+                                            noTranslation
+                                              | js2n.Always
+                                              | optional,
+                                            sm | js2n.Always | optional,
+                                            style | js2n.Always | optional,
+                                            text
+                                              | std.contract.any_of
+                                                [
+                                                  String,
+                                                  std.contract.Sequence
+                                                    [
+                                                      refs."definitions.multilingual",
+                                                      { _ | Dyn }
+                                                    ]
+                                                ]
+                                              | doc "Text to be shown",
+                                            title
+                                              | std.contract.any_of
+                                                [
+                                                  String,
+                                                  std.contract.Sequence
+                                                    [
+                                                      refs."definitions.multilingual",
+                                                      { _ | Dyn }
+                                                    ]
+                                                ]
+                                              | doc "Title of the info box"
+                                              | optional,
+                                            type | js2n.Always,
+                                            xl | js2n.Always | optional,
+                                            xs | js2n.Always | optional,
+                                          },
+                                          Array Dyn
                                         ]) js2n.Always,
                                     js2n.IfThenElse
                                       (std.contract.any_of
@@ -9722,7 +9886,26 @@ let rec refs
                                     options
                                       | Array (
                                         std.contract.any_of
-                                          [ { _ | Dyn }, String ]
+                                          [
+                                            String,
+                                            {
+                                              color | String | optional,
+                                              hidden | Bool | optional,
+                                              label
+                                                | std.contract.any_of
+                                                  [
+                                                    String,
+                                                    std.contract.Sequence
+                                                      [
+                                                        refs."definitions.multilingual",
+                                                        { _ | Dyn }
+                                                      ]
+                                                  ],
+                                              value
+                                                | std.contract.any_of
+                                                  [ Number, String ],
+                                            }
+                                          ]
                                       )
                                       | doc "Options which can be completed. [\"value1\", \"value2\", ...] or [{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]",
                                     placeholder
@@ -9862,6 +10045,7 @@ let rec refs
                                     options
                                       | Array
                                         {
+                                          color | String | optional,
                                           group
                                             | Bool
                                             | doc "Is this a group"
@@ -10616,6 +10800,87 @@ let rec refs
                                           Array Dyn
                                         ]
                                     ]
+                                ]) js2n.Always,
+                            js2n.IfThenElse
+                              (std.contract.any_of
+                                [
+                                  js2n.Null,
+                                  Bool,
+                                  Number,
+                                  String,
+                                  js2n.record.Record
+                                    {
+                                      additional = 'Some Dyn,
+                                      patterns = {},
+                                      properties =
+                                        { type = js2n.Const "infoBox", },
+                                      required = {},
+                                    },
+                                  Array Dyn
+                                ])
+                              (std.contract.any_of
+                                [
+                                  js2n.Null,
+                                  Bool,
+                                  Number,
+                                  String,
+                                  {
+                                    allowSaveWithError | js2n.Always | optional,
+                                    boxType
+                                      | std.enum.TagOrString
+                                      | [| 'ok, 'error, 'warning, 'info |]
+                                      | doc "Type of the box"
+                                      | optional,
+                                    closable
+                                      | Bool
+                                      | doc "If the box is closeable"
+                                      | optional,
+                                    closed
+                                      | Bool
+                                      | doc "Use together with `closeable: true`. If the box is closed or not. In this case, it will be controlled from outside"
+                                      | optional,
+                                    expertMode | js2n.Always | optional,
+                                    hidden | js2n.Always | optional,
+                                    hideOnlyControl | js2n.Always | optional,
+                                    iconPosition
+                                      | std.enum.TagOrString
+                                      | [| 'middle, 'top |]
+                                      | doc "Position of the icon"
+                                      | optional,
+                                    lg | js2n.Always | optional,
+                                    md | js2n.Always | optional,
+                                    newLine | js2n.Always | optional,
+                                    noTranslation | js2n.Always | optional,
+                                    sm | js2n.Always | optional,
+                                    style | js2n.Always | optional,
+                                    text
+                                      | std.contract.any_of
+                                        [
+                                          String,
+                                          std.contract.Sequence
+                                            [
+                                              refs."definitions.multilingual",
+                                              { _ | Dyn }
+                                            ]
+                                        ]
+                                      | doc "Text to be shown",
+                                    title
+                                      | std.contract.any_of
+                                        [
+                                          String,
+                                          std.contract.Sequence
+                                            [
+                                              refs."definitions.multilingual",
+                                              { _ | Dyn }
+                                            ]
+                                        ]
+                                      | doc "Title of the info box"
+                                      | optional,
+                                    type | js2n.Always,
+                                    xl | js2n.Always | optional,
+                                    xs | js2n.Always | optional,
+                                  },
+                                  Array Dyn
                                 ]) js2n.Always,
                             js2n.IfThenElse
                               (std.contract.any_of

@@ -427,6 +427,12 @@ let rec refs
               refs."definitions.diagnostic",
               std.contract.any_of [ Bool, String ]
             ],
+      "definitions.reportUnreachable" =
+        std.contract.Sequence
+            [
+              refs."definitions.diagnostic",
+              std.contract.any_of [ Bool, String ]
+            ],
       "definitions.reportUnsupportedDunderAll" =
         std.contract.Sequence
             [
@@ -830,6 +836,10 @@ let rec refs
               | refs."definitions.reportUnnecessaryTypeIgnoreComment"
               | std.contract.any_of [ Bool, String ]
               | optional,
+            reportUnreachable
+              | refs."definitions.reportUnreachable"
+              | std.contract.any_of [ Bool, String ]
+              | optional,
             reportUnsupportedDunderAll
               | refs."definitions.reportUnsupportedDunderAll"
               | std.contract.any_of [ Bool, String ]
@@ -1174,6 +1184,10 @@ let rec refs
         | optional,
       reportUnnecessaryTypeIgnoreComment
         | refs."definitions.reportUnnecessaryTypeIgnoreComment"
+        | std.contract.any_of [ Bool, String ]
+        | optional,
+      reportUnreachable
+        | refs."definitions.reportUnreachable"
         | std.contract.any_of [ Bool, String ]
         | optional,
       reportUnsupportedDunderAll

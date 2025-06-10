@@ -515,6 +515,10 @@ let rec refs
                                   | Array String
                                   | doc "Alternative names for the namespace of the included Taskfile."
                                   | optional,
+                                checksum
+                                  | String
+                                  | doc "The checksum of the file you expect to include. If the checksum does not match, the file will not be included."
+                                  | optional,
                                 dir
                                   | String
                                   | doc "The working directory of the included tasks when run."

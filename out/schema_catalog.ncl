@@ -21,11 +21,9 @@ let rec refs
               | doc "A Minimatch glob expression for matching up file names with a schema."
               | optional,
             name | String | doc "The name of the schema",
-            url
-              | js2n.string.Matches "^https://"
-              | doc "An absolute URL to the schema location",
+            url | String | doc "An absolute URL to the schema location",
             versions
-              | { _ | js2n.string.Matches "^https://" }
+              | { _ | String }
               | doc "A set of specific version to schema mappings"
               | optional,
           }

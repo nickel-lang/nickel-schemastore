@@ -172,4 +172,39 @@ let rec refs
           zero-fill-buffers | Bool | optional,
         }
         | optional,
+      testRunner
+        | {
+          experimental-test-coverage | Bool | optional,
+          experimental-test-module-mocks | Bool | optional,
+          test-concurrency | Number | optional,
+          test-coverage-branches | Number | optional,
+          test-coverage-exclude
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-coverage-functions | Number | optional,
+          test-coverage-include
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-coverage-lines | Number | optional,
+          test-force-exit | Bool | optional,
+          test-global-setup | String | optional,
+          test-isolation | String | optional,
+          test-name-pattern
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-only | Bool | optional,
+          test-reporter
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-reporter-destination
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-shard | String | optional,
+          test-skip-pattern
+            | std.contract.any_of [ String, Array String ]
+            | optional,
+          test-timeout | Number | optional,
+          test-update-snapshots | Bool | optional,
+        }
+        | optional,
     }

@@ -141,6 +141,10 @@ let rec refs
         | Number
         | doc "The time in minutes after which dlx cache expires."
         | optional,
+      enableGlobalVirtualStore
+        | Bool
+        | doc "When enabled, node_modules contains only symlinks to a central virtual store, rather than to node_modules/.pnpm."
+        | optional,
       enableModulesDir
         | Bool
         | doc "When false, pnpm will not write any files to the modules directory (node_modules)."

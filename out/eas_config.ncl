@@ -426,6 +426,10 @@ let rec refs
               | String
               | doc "The name of your company, needed only for the first submission of any app to the App Store."
               | optional,
+            groups
+              | Array Dyn
+              | doc "Internal TestFlight testing groups to add the build to (iOS only). Learn more: https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers"
+              | optional,
             language
               | String
               | doc "Primary language. Defaults to `en-US`."

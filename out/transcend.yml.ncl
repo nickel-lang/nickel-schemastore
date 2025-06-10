@@ -11158,6 +11158,7 @@ let rec refs
                                         'BUSINESS_ENTITY,
                                         'REGION,
                                         'VENDOR,
+                                        'PROCESSING_ACTIVITY,
                                         'PROCESSING_PURPOSE_SUB_CATEGORY,
                                         'DATA_SUB_CATEGORY,
                                         'TEAM,
@@ -11169,6 +11170,10 @@ let rec refs
                                     sync-column
                                       | std.enum.TagOrString
                                       | [|
+                                        'DATA_PROTECTION_IMPACT_ASSESSMENT_STATUS,
+                                        'DATA_PROTECTION_IMPACT_ASSESSMENT_LINK,
+                                        'STORAGE_REGIONS,
+                                        'SECURITY_MEASURE_DETAILS,
                                         'CUSTOM_SILO_CONNECTION_STRATEGY,
                                         'IS_PRIMARY_KEY,
                                         'ENCRYPTION,
@@ -11254,6 +11259,7 @@ let rec refs
                                     sync-model
                                       | std.enum.TagOrString
                                       | [|
+                                        'processingActivity,
                                         'businessEntity,
                                         'processingPurposeSubCategory,
                                         'dataSubCategory,
@@ -11536,6 +11542,7 @@ let rec refs
                                         'BUSINESS_ENTITY,
                                         'REGION,
                                         'VENDOR,
+                                        'PROCESSING_ACTIVITY,
                                         'PROCESSING_PURPOSE_SUB_CATEGORY,
                                         'DATA_SUB_CATEGORY,
                                         'TEAM,
@@ -11547,6 +11554,10 @@ let rec refs
                                     sync-column
                                       | std.enum.TagOrString
                                       | [|
+                                        'DATA_PROTECTION_IMPACT_ASSESSMENT_STATUS,
+                                        'DATA_PROTECTION_IMPACT_ASSESSMENT_LINK,
+                                        'STORAGE_REGIONS,
+                                        'SECURITY_MEASURE_DETAILS,
                                         'CUSTOM_SILO_CONNECTION_STRATEGY,
                                         'IS_PRIMARY_KEY,
                                         'ENCRYPTION,
@@ -11632,6 +11643,7 @@ let rec refs
                                     sync-model
                                       | std.enum.TagOrString
                                       | [|
+                                        'processingActivity,
                                         'businessEntity,
                                         'processingPurposeSubCategory,
                                         'dataSubCategory,
@@ -35131,6 +35143,60 @@ let rec refs
         | Array { content | String, title | String, .. }
         | optional,
       prompts | Array { content | String, title | String, .. } | optional,
+      purposes
+        | Array (
+          std.contract.Sequence
+            [
+              { name | String, title | String, trackingType | String, .. },
+              {
+                auth-level
+                  | std.enum.TagOrString
+                  | [| 'ALLOW_OPT_OUT, 'OPTIONAL, 'REQUIRED |]
+                  | optional,
+                configurable | Bool | optional,
+                default-consent
+                  | std.enum.TagOrString
+                  | [| 'Auto, 'off |]
+                  | optional,
+                description | String | optional,
+                display-order | Number | optional,
+                is-active | Bool | optional,
+                opt-out-signals
+                  | Array (
+                    std.contract.Sequence
+                      [ std.enum.TagOrString, [| 'DNT, 'GPC |] ]
+                  )
+                  | optional,
+                preference-topics
+                  | Array (
+                    std.contract.Sequence
+                      [
+                        {
+                          description | String,
+                          title | String,
+                          type
+                            | std.enum.TagOrString
+                            | [| 'BOOLEAN, 'MULTI_SELECT, 'SELECT |],
+                          ..
+                        },
+                        {
+                          default-configuration | String | optional,
+                          options
+                            | Array { slug | String, title | String, .. }
+                            | optional,
+                          show-in-privacy-center | Bool | optional,
+                          ..
+                        }
+                      ]
+                  )
+                  | optional,
+                show-in-consent-manager | Bool | optional,
+                show-in-privacy-center | Bool | optional,
+                ..
+              }
+            ]
+        )
+        | optional,
       teams
         | Array (
           std.contract.Sequence

@@ -35,7 +35,27 @@ let rec refs
             | optional,
           historyCount | Number | optional,
           inputTemplate | String | optional,
+          knowledgeBases
+            | Array
+              {
+                avatar | js2n.Nullable String,
+                createdAt | String,
+                description
+                  | std.contract.any_of
+                    [ std.contract.not js2n.Always, String, js2n.Null ]
+                  | optional,
+                enabled | Bool | optional,
+                id | String,
+                isPublic | js2n.Nullable Bool,
+                name | String,
+                settings | js2n.Always | optional,
+                type | js2n.Nullable String,
+                updatedAt | String,
+              }
+            | optional,
           model | String | optional,
+          openingMessage | String | optional,
+          openingQuestions | Array String | optional,
           params
             | {
               frequency_penalty | Number | optional,
@@ -52,6 +72,7 @@ let rec refs
       examples | refs."properties.config.properties.fewShots" | optional,
       homepage | String,
       identifier | String,
+      knowledgeCount | Number,
       meta
         | {
           avatar | String,
@@ -61,5 +82,8 @@ let rec refs
           tags | Array String,
           title | String,
         },
+      pluginCount | Number,
       schemaVersion | Number,
+      summary | String | optional,
+      tokenUsage | Number,
     }

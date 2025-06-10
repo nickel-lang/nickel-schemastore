@@ -124,6 +124,10 @@ let rec refs
                 Defaults to `false`.
               "%
               | optional,
+            exclude_from_mesh
+              | js2n.Nullable Bool
+              | doc "When running the agent as an ephemeral container, use this option to exclude the agent's port from the service mesh sidecar proxy."
+              | optional,
             flush_connections
               | js2n.Nullable Bool
               | doc m%"

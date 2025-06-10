@@ -20,7 +20,7 @@ let rec refs
                   domains
                     | Array String
                     | doc m%"
-                      Fully qualified domain names to specify specific destinations by hostname
+                      Fully qualified domain names to specify specific destinations by hostname 
                       https://en.wikipedia.org/wiki/Fully_qualified_domain_name 
                       More information: 
                       https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers
